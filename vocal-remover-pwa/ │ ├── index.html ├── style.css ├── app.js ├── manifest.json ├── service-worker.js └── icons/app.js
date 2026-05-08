@@ -4,7 +4,7 @@ async function processAudio() {
   const player = document.getElementById("player");
 
   if (!fileInput.files.length) {
-    status.innerText = "Please select a file first";
+    status.innerText = "Please select a file";
     return;
   }
 
@@ -13,25 +13,42 @@ async function processAudio() {
   const formData = new FormData();
   formData.append("audio", file);
 
-  status.innerText = "Processing audio...";
+  status.innerText = "Uploading & processing...";
 
   try {
-    // 🔴 Replace this with your backend URL later
-    const response = await fetch("https://your-backend-url.com/remove", {
+    // This MUST be a real backend (Demucs/Spleeter server)
+    const response = await fetch("https://YOUR-AI-BACKEND/remove-stems", {
       method: "POST",
       body: formData
     });
 
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
+    if (!response.ok) {
+      throw new Error("Server error");
+    }
 
-    player.src = url;
+    const data = await response.json();
+
+    // backend returns:
+    // {
+    //   instrumental_url: "...",
+    //   vocals_url: "..."
+    // }
+
+    const instrumental = data.instrumental_url;
+    const vocals = data.vocals_url;
+
+    // Play instrumental
+    player.src = instrumental;
     player.style.display = "block";
     player.play();
 
-    status.innerText = "Done! Playing instrumental.";
+    status.innerText = "Done! Instrumental ready.";
+
+    // Optional: store vocal track
+    window.vocalTrack = vocals;
+
   } catch (err) {
     console.error(err);
-    status.innerText = "Error processing audio.";
+    status.innerText = "Processing failed (no backend connected)";
   }
 }
