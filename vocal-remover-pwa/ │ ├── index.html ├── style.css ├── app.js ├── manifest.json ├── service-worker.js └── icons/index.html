@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocal Remover PWA</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>🎵 Vocal Remover</h1>
+    <p>Upload a song and get instrumental output</p>
+
+    <input type="file" id="audioFile" accept="audio/*">
+
+    <button onclick="processAudio()">Remove Vocals</button>
+
+    <p id="status"></p>
+
+    <audio id="player" controls style="display:none;"></audio>
+  </div>
+
+  <script src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+</body>
+</html>
